@@ -1,0 +1,190 @@
+\documentclass{article}
+
+%Para usar idioma español
+\usepackage[spanish]{babel}
+%Codificación de teclado: en windows, pueden usar utf8 o, si su editor de texto no lo soporta, latin1. Ejemplo:
+%usepackage[latin1]{inputenc}
+\usepackage[utf8]{inputenc}
+%\usepackage{amsmath}
+%\usepackage{graphicx}
+%Para posicionar las imágenes
+\usepackage{float}
+%Para encabezados personalizados
+\usepackage{fancyhdr}
+%Para tablas de más de una hoja
+%\usepackage{longtable}
+%Para incluir documentos en pdf
+\usepackage{pdfpages}
+
+%Definir márgenes
+\oddsidemargin .1cm
+\textwidth 15cm
+\topmargin 0in
+\textheight 8.5in
+
+%Encabezado y pie de página
+\pagestyle{fancy}
+\cfoot{\author}
+\rfoot{\textbf{\thepage}}
+
+%Definir recta para encabezado y pie de página
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\title{Hola}
+\author{Nicolás Tempone\\
+Segundo Autor\\
+Tercer Autor\\
+Cuarto Autor}
+\date{Marzo de 2012}
+
+%Comienzo del documento
+\begin{document}
+\headheight 0cm
+
+\maketitle
+\clearpage
+\tableofcontents
+\clearpage
+
+%Comando para crear una sección:
+\section{Introducción}
+
+%Este breve documento muestra el uso de \Latex{} en la creación de informes para la materia 66.82 Propagación y Sistemas Irradiantes.
+
+\section{Gráficos}
+
+Los gráficos siemrpe deben presentarse con escalas adecuadas, y deben contar con las siguientes características:
+
+%Bloque para describir distintos items:
+\begin{itemize}
+ \item Magnitud graficada y unidad (entre corchetes) en ambos ejes.
+ \item Grilla (comando \texttt{grid on}).
+ \item Cuando haya más de un trazo en el mismo gráfico, agregar leyendas adecuadas para su correcta diferenciación. Utilizar el comando \texttt{legend}.
+\end{itemize}
+
+\section{Anexos}
+
+Pueden incluirse Anexos como \textit{listings} de \texttt{Matlab}, por ejemplo, ver Anexo \ref{matlab_ej1}
+
+
+\section{Línea Cargada}
+
+\begin{figure}[H]
+ \centering
+ \includegraphics[scale=0.5]{linea_sist_ref1}
+ \caption{Sistema de referencia en una línea de transmisión.}
+\end{figure}
+
+Tensiones y corrientes en la línea
+
+\[
+ v(z,t) = e^{i \omega t} [V_+ e^{-i \gamma z} + V_- e^{i \gamma z}] =
+ V_+ e^{i \omega t}[ e^{-i \gamma z} + \rho_L e^{i \gamma z}]
+\]
+
+\[
+ i(z,t) = \frac{e^{i \omega t}}{Z_0} [V_+ e^{-i \gamma z} - V_- e^{i \gamma z}] =
+ \frac{V_+}{Z_0} e^{i \omega t}[ e^{-i \gamma z} - \rho_L e^{i \gamma z}]
+\]
+
+Donde:
+\[
+ \gamma = \beta - i \ \alpha
+\]
+
+Por lo que:
+
+\[
+ v(z,t) = v_0 \ e^{-\alpha z} \  e^{i (\omega t - \beta z)} 
+\]
+
+De donde reconocemos que la velocidad de propagación de la onda es:
+\[
+ c = \frac{\omega}{\beta} \longrightarrow \beta = \frac{\omega}{c} = \frac{2 \pi f}{\lambda f} = \frac{2 \pi}{\lambda}
+\]
+
+
+Coeficiente de reflexión en la carga ($z=0$)
+
+\[
+ \rho_L = \frac{V_-}{V_+}= \frac{Z_L - Z_0}{Z_L+Z_0}
+\]
+
+Coeficiente de transmisión en la carga ($z=0$)
+
+\[
+ \tau_L=\frac{V_L}{V_+}= 1+\rho = \frac{2 Z_L}{Z_L+Z_0}
+\]
+
+
+Return Loss
+
+\[
+ RL = -20 \log(|\rho|)
+\]
+
+Impedancia y admitancia en la línea
+
+\[
+ Z(z) = \frac{v(z,t)}{i(z,t)} =
+ Z_0 \frac{ e^{-i \gamma z} + \rho_L e^{i \gamma z} }{ e^{-i \gamma z} - \rho_L e^{i \gamma z} }=
+ Z_0 \frac{ 1 + \rho_L e^{2 i \gamma z} }{ 1 - \rho_L e^{2 i \gamma z} }=
+ Z_0 \frac{Z_L \cos(\gamma z) - i Z_0 \sin(\gamma z)}{Z_0 \cos(\gamma z) - i Z_L \sin(\gamma z)} =
+ Z_0 \frac{Z_L  - i Z_0 \tan(\gamma z)}{Z_0 - i Z_L \tan(\gamma z)}
+\]
+
+\[
+ Y(z) = \frac{i(z,t)}{v(z,t)} =
+ Y_0 \frac{Y_L \cos(\gamma z) - i Y_0 \sin(\gamma z)}{Y_0 \cos(\gamma z) - i Y_L \sin(\gamma z)} =
+ Y_0 \frac{Y_L - i Y_0 \tan(\gamma z)}{Y_0 - i Y_L \tan(\gamma z)}
+\]
+
+Relación de onda estacionaria (SWR)
+
+\[
+ ROE = \frac{V_M}{V_m} = \frac{1+|\rho|}{1-|\rho|}
+\]
+
+Línea con generador
+
+\begin{figure}[H]
+ \centering
+ \includegraphics[scale=0.5]{linea_generador_y_carga}
+\end{figure}
+
+\[
+ V_+ = \frac{ Z_0 (Z_L+Z_0) }
+{(Z_L + Z_0)(Z_g+Z_0) e^{i k d} + (Z_L - Z_0)(Z_0-Z_g)e^{-i k d} } V_g
+\]
+
+\[
+ V_-=\rho V_+
+\]
+
+
+\clearpage
+
+%\includepdf[pages = 1-3]{./6-Lineas2}
+
+
+\appendix
+
+\section{Código de Matlab, Ejercicio 1}
+
+Puede incluirse mediante los comandos \verb| \begin{verbatim} ...código...    \end{verbatim}|:
+
+\begin{verbatim}
+clc
+clear all
+x = [1:1000];
+y = sin(2*pi*x);
+plot(x,y)
+grind on
+
+\end{verbatim}
+
+
+
+
+\end{document}

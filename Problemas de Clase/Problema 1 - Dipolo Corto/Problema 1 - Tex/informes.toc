@@ -1,0 +1,12 @@
+\babel@toc {spanish}{}
+\contentsline {section}{\numberline {1}Introducci\IeC {\'o}n}{2}{section.1}% 
+\contentsline {subsection}{\numberline {1.1}Ejemplo de subsecci\IeC {\'o}n}{2}{subsection.1.1}% 
+\contentsline {subsubsection}{\numberline {1.1.1}Ejemplo de subsubsecci\IeC {\'o}n: modo matem\IeC {\'a}tico}{2}{subsubsection.1.1.1}% 
+\contentsline {section}{\numberline {2}Instalaci\IeC {\'o}n}{2}{section.2}% 
+\contentsline {subsection}{\numberline {2.1}Paquetes}{2}{subsection.2.1}% 
+\contentsline {section}{\numberline {3}Secciones de los informes de trabajos pr\IeC {\'a}cticos}{2}{section.3}% 
+\contentsline {section}{\numberline {4}Gr\IeC {\'a}ficos}{3}{section.4}% 
+\contentsline {section}{\numberline {5}A\IeC {\~n}adir Anexos}{3}{section.5}% 
+\contentsline {section}{\numberline {6}Tablas}{4}{section.6}% 
+\contentsline {section}{\numberline {7}Ejemplo: L\IeC {\'\i }nea Cargada}{4}{section.7}% 
+\contentsline {section}{\numberline {A}C\IeC {\'o}digo de Matlab/Octave, Ejercicio 1}{5}{appendix.Alph1}% 

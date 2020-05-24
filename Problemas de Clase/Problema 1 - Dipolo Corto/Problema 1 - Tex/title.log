@@ -1,0 +1,320 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.5.6)  6 MAY 2020 10:26
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**title.tex
+(./title.tex
+LaTeX2e <2018-12-01>
+
+! LaTeX Error: Environment titlepage undefined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1 \begin{titlepage}
+                     
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.3 \begin{center}
+                  
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Overfull \hbox (20.0pt too wide) in paragraph at lines 3--3
+[] 
+ []
+
+! Undefined control sequence.
+l.6 \includegraphics
+                    [scale=1]{img/fiuba.png} \\[1cm]
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+Missing character: There is no [ in font nullfont!
+Missing character: There is no s in font nullfont!
+Missing character: There is no c in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no = in font nullfont!
+Missing character: There is no 1 in font nullfont!
+Missing character: There is no ] in font nullfont!
+Missing character: There is no i in font nullfont!
+Missing character: There is no m in font nullfont!
+Missing character: There is no g in font nullfont!
+Missing character: There is no / in font nullfont!
+Missing character: There is no f in font nullfont!
+Missing character: There is no i in font nullfont!
+Missing character: There is no u in font nullfont!
+Missing character: There is no b in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no . in font nullfont!
+Missing character: There is no p in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no g in font nullfont!
+! Undefined control sequence.
+<recently read> \LARGE 
+                       
+l.9 ...sc{\LARGE Facultad de Ingeniería - U.B.A.}
+                                                  \\[1.5cm]
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (46.00249pt too wide) in paragraph at lines 9--9
+ []\OT1/cmr/m/sc/10 Facultad 
+ []
+
+
+Overfull \hbox (11.82217pt too wide) in paragraph at lines 9--9
+ \OT1/cmr/m/sc/10 de 
+ []
+
+
+Overfull \hbox (13.96655pt too wide) in paragraph at lines 9--9
+ \OT1/cmr/m/sc/10 In- 
+ []
+
+
+Overfull \hbox (15.76656pt too wide) in paragraph at lines 9--9
+ \OT1/cmr/m/sc/10 ge- 
+ []
+
+
+Overfull \hbox (29.91098pt too wide) in paragraph at lines 9--9
+ \OT1/cmr/m/sc/10 nier[]^^Pa 
+ []
+
+
+Overfull \hbox (3.77774pt too wide) in paragraph at lines 9--9
+ \OT1/cmr/m/sc/10 - 
+ []
+
+
+Overfull \hbox (33.56906pt too wide) in paragraph at lines 9--9
+ \OT1/cmr/m/sc/10 U.B.A. 
+ []
+
+! Undefined control sequence.
+<recently read> \Large 
+                       
+l.11 ...86.29 Propagación y Sistemas Irradiantes}
+                                                  \\[2cm]
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (25.3053pt too wide) in paragraph at lines 11--11
+ []\OT1/cmr/m/sc/10 86.29 
+ []
+
+
+Overfull \hbox (34.3942pt too wide) in paragraph at lines 11--11
+ \OT1/cmr/m/sc/10 Propa- 
+ []
+
+
+Overfull \hbox (33.74428pt too wide) in paragraph at lines 11--11
+ \OT1/cmr/m/sc/10 gaci[]on 
+ []
+
+
+Overfull \hbox (6.13332pt too wide) in paragraph at lines 11--11
+ \OT1/cmr/m/sc/10 y 
+ []
+
+
+Overfull \hbox (17.48874pt too wide) in paragraph at lines 11--11
+ \OT1/cmr/m/sc/10 Sis- 
+ []
+
+
+Overfull \hbox (29.66652pt too wide) in paragraph at lines 11--11
+ \OT1/cmr/m/sc/10 temas 
+ []
+
+
+Overfull \hbox (13.85544pt too wide) in paragraph at lines 11--11
+ \OT1/cmr/m/sc/10 Ir- 
+ []
+
+
+Overfull \hbox (15.93326pt too wide) in paragraph at lines 11--11
+ \OT1/cmr/m/sc/10 ra- 
+ []
+
+
+Overfull \hbox (13.04437pt too wide) in paragraph at lines 11--11
+ \OT1/cmr/m/sc/10 di- 
+ []
+
+
+Overfull \hbox (28.3332pt too wide) in paragraph at lines 11--11
+ \OT1/cmr/m/sc/10 antes 
+ []
+
+! Undefined control sequence.
+l.15 { \huge
+             \bfseries Problema nro. 1:}\\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (48.37474pt too wide) in paragraph at lines 15--15
+ []\OT1/cmr/bx/n/10 Problema 
+ []
+
+
+Overfull \hbox (20.06935pt too wide) in paragraph at lines 15--15
+ \OT1/cmr/bx/n/10 nro. 
+ []
+
+
+Overfull \hbox (8.9444pt too wide) in paragraph at lines 15--15
+ \OT1/cmr/bx/n/10 1: 
+ []
+
+! Undefined control sequence.
+l.16 { \huge
+             \bfseries Dipolo Corto}\\[3cm]
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (33.41649pt too wide) in paragraph at lines 16--16
+ []\OT1/cmr/bx/n/10 Dipolo 
+ []
+
+
+Overfull \hbox (29.01375pt too wide) in paragraph at lines 16--16
+ \OT1/cmr/bx/n/10 Corto 
+ []
+
+! Undefined control sequence.
+l.19 \begin{flushleft} \large
+                             
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (37.02055pt too wide) in paragraph at lines 20--20
+\OT1/cmr/m/it/10 Autores:  
+ []
+
+Missing character: There is no F in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no r in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no d in font nullfont!
+Missing character: There is no o in font nullfont!
+Missing character: There is no J in font nullfont!
+Missing character: There is no . in font nullfont!
+Missing character: There is no I in font nullfont!
+Missing character: There is no g in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no s in font nullfont!
+Missing character: There is no i in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no s in font nullfont!
+Missing character: There is no 9 in font nullfont!
+Missing character: There is no 4 in font nullfont!
+Missing character: There is no 8 in font nullfont!
+Missing character: There is no 4 in font nullfont!
+Missing character: There is no 2 in font nullfont!
+! Undefined control sequence.
+l.26 \begin{flushleft} \large
+                             
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (42.1205pt too wide) in paragraph at lines 27--27
+\OT1/cmr/m/it/10 Docentes:  
+ []
+
+Missing character: There is no G in font nullfont!
+Missing character: There is no u in font nullfont!
+Missing character: There is no s in font nullfont!
+Missing character: There is no t in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no v in font nullfont!
+Missing character: There is no o in font nullfont!
+Missing character: There is no F in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no o in font nullfont!
+Missing character: There is no P in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no b in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no o in font nullfont!
+Missing character: There is no L in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no s in font nullfont!
+
+! LaTeX Error: \begin{document} ended by \end{titlepage}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.40 \end{titlepage}
+                    
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+)
+! Emergency stop.
+<*> title.tex
+             
+*** (job aborted, no legal \end found)
+
+ 
+Here is how much of TeX's memory you used:
+ 16 strings out of 492609
+ 228 string characters out of 6131463
+ 59258 words of memory out of 5000000
+ 4035 multiletter control sequences out of 15000+600000
+ 4595 words of font info for 17 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 14i,1n,10p,92b,158s stack positions out of 5000i,500n,10000p,200000b,80000s
+!  ==> Fatal error occurred, no output PDF file produced!
