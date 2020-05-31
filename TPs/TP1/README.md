@@ -7,6 +7,7 @@ Los modelos y longitudes de las líneas de transmisión utilizadas en las medici
 Los archivos corresponden a las siguientes mediciones:
 
 * Punto 5 - Inciso (b)
+
     Autosave1.s1p: Parámetro S11 de la línea de transmisión 1 en cortocircuito.
     Autosave2.s1p: Parámetro S11 de la línea de transmisión 1 en circuito abierto.
     Autosave3.s1p: Parámetro S11 de la línea de transmisión 2 en cortocircuito.
@@ -15,11 +16,13 @@ Los archivos corresponden a las siguientes mediciones:
     Autosave6.s1p: Parámetro S11 de la línea de transmisión 3 en circuito abierto.
 
 * Punto 5 - Inciso (d)
+
     Autosave7.s1p: Parámetro S11 de la línea de transmisión 1 con una carga de 75 Ω.
     Autosave8.s1p: Parámetro S11 de la línea de transmisión 2 con una carga de 75 Ω.
     Autosave9.s1p: Parámetro S11 de la línea de transmisión 3 con una carga de 75 Ω.
  
  * Punto 6
+   
     Autosave10.s2p: Parámetros S de la línea de transmisión 1.
     Autosave11.s2p: Parámetros S de la línea de transmisión 2.
     Autosave12.s2p: Parámetros S de la línea de transmisión 3.
