@@ -18,13 +18,13 @@ c = 3e8
 
 # Datos del dipolo
 length = 1 # m
-radio = 1 # mm
+radio = 1e-3 # mm
 sigma = 5.8e7 # S/m
-mu = 4*pi*10^(-7)
+mu = 4*pi*1e-7
 
 # Datos del monopolo
 # radio y conductividad idem dipolo
-heigth = 1/2 #m
+heigth = 1/2 #
 length_monopole = 2*length
 
 
@@ -40,18 +40,19 @@ length_monopole = 2*length
     output : resistencia de radiacion
 '''
 
-def dipole_radiation_resistance_integrand(l,x):
-    
-    num = (cos(pi*l*cos(x)) - cos(pi*l))**2
-    den = sin(x)
+def dipole_radiation_resistance_integrand(x,l):
+
+    num = ((np.cos(pi*l*np.cos(x)) - np.cos(pi*l))**2)
+    den = np.sin(x)
     
     return num/den
 
 def dipole_radiation_resistance_equation(l):
     
-    r_radiation = 60 * integrate.quad(lambda x: dipole_radiation_resistance_integrand(l,x), 0, pi)
+    r_radiation = integrate.quad(lambda x, l: dipole_radiation_resistance_integrand(x,l),
+                                      0, 3.14, args=(l,))
 
-    return r_radiation
+    return 60 * r_radiation[0]
 
 
 '''
@@ -63,10 +64,10 @@ def dipole_radiation_resistance_equation(l):
 
 def dipole_loss_resistance(l):
     
-    termino_1 = length**1/2 / (2*pi*radio)
-    termino_2 = (pi*c*mu/sigma)**1/2
-    termino_3 = l**1/2
-    termino_4 = 1- (sin(2*pi*l)/ (2*pi*l))
+    termino_1 = ((length)**(1/2) / (2*pi*radio))
+    termino_2 = ((pi*c*mu)/sigma)**(1/2)
+    termino_3 = l**(1/2)
+    termino_4 = (1 - (sin(2*pi*l) / (2*pi*l)))
 
     return termino_1 * termino_2 * termino_3 * termino_4
 
@@ -207,38 +208,22 @@ def monopole_loss_resistance(r_loss_dipole):
 
 
 
-
-
-
-
-
-
 def plot_parameter():
     
-    dl = np.arange(0.01,1,0.1)
-    r_radiation_list = []
+    dl = np.arange(0.01,1,0.01)
+    r_radiation_list = [dipole_radiation_resistance_equation(l) for l in dl]
     
-    for l in dl:
-        r_radiation_list.append(radiation_resistance_equation(l))
+    r_loss = [dipole_loss_resistance(l) for l in dl]
 
-
-    print(r_radiation_list)
-
-    plt.ion()
-    plt.figure()
+    plt.plot(dl, r_loss)
     
     plt.plot(dl, r_radiation_list)
 
-    plt.ioff()
-    plt.show()
-    
 
-
-              
 def main():
     
     plot_parameter()
-    
+
     
 if __name__ == '__main__':
     main()    
