@@ -256,10 +256,8 @@ def min_max_val(parameter, param, key):
     minVal = min(parameter)
     maxVal = max(parameter)
 
-    print(f"| {key} {param} minima | {minVal} |", file=open("data.md","a"))
-    print("|-----------------------|----------|", file=open("data.md","a"))
-    print(f"| {key} {param} maxima | {maxVal} |", file=open("data.md","a"))
-    print("|-----------------------|----------|", file=open("data.md","a"))
+    print(f"| {key} {param} minima | {minVal} |", file=open("README.md","a"))
+    print(f"| {key} {param} maxima | {maxVal} |", file=open("README.md","a"))
 
 def plot_parameter(param, dictionary, wd):
     
@@ -299,6 +297,19 @@ def plot_parameter(param, dictionary, wd):
                 parameter = np.multiply(parameter, 2)
 
             min_max_val(parameter, param, key)
+
+        elif param == 'Gain':
+            
+            directivity = [dipole_max_directivity_inTimes(l) 
+                       for l in dl]
+            
+            if(key == 'Monopolo'):
+                directivity = np.multiply(directivity, 2)
+
+            eff = [dipole_efficiency(dipole_radiation_resistance_equation(l),
+                    dipole_loss_resistance(l)) for l in dl]
+            
+            parameter = np.multiply(directivity, eff)
 
         else:
             print(f"Error {param} param not found!")
@@ -349,12 +360,15 @@ def main():
         'Loss Resistance',
         'Efficiency',
         'Directivity',
-        'Random To Test Errors'
+        'Gain'
     ]
    
     ## Create table markdown file to generate a table wth the values
-    print("| Dato | Valor |", file=open("data.md","a"))
-    print("| ---- | ----- |", file=open("data.md","a"))
+
+    print("## Archivo creado por dipole_functions.py ", file=open("README.md","a"))
+
+    print("| Dato | Valor |", file=open("README.md","a"))
+    print("| ---- | ----- |", file=open("README.md","a"))
 
     ### Plot
     for param in plotParameters:
