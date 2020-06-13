@@ -208,11 +208,19 @@ def monopole_loss_resistance(r_loss_dipole):
     
 '''
 
-def polar_plot_dB(l, mindB, efficiency, directivity):
+def polar_plot_dB(l, mindB):
     #####Parametros
     avoid0 = 0.001
     dtheta = np.linspace(avoid0, 2*pi, 1000)
     
+    ## R radation and R loss
+    R_rad = dipole_radiation_resistance_equation(l)
+    R_loss = dipole_loss_resistance(l)
+    
+    ## D and eff
+    directivity = dipole_max_directivity_inTimes(l)
+    efficiency = dipole_efficiency(R_rad, R_loss)
+        
     #### Caluclo de la ganancia
     # Hay que castear a float para usar np.log10()
     gain = float(directivity * efficiency)
@@ -232,52 +240,64 @@ def polar_plot_dB(l, mindB, efficiency, directivity):
     ##### Plot
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='polar')
-    ax.plot(dtheta, F_g_db, label=fr'$L/\lambda$ = {l}', color='m')
+    ax.plot(dtheta, F_g_db,
+            label=fr'$L/\lambda$ = {l}',
+            color='m', linewidth=2)
     ax.legend(loc='upper right')
     
 
-def plot_parameter():
+def plot_parameter(param):
     
     #### All lengths
     dl = np.arange(0.01,1,0.01)
     
     
+    if param == 'Radiation Resistance':
+        parameter = [dipole_radiation_resistance_equation(l) 
+                            for l in dl]
+    elif param == 'Loss Resistance': 
+        parameter = [dipole_loss_resistance(l) 
+                  for l in dl]
+    elif param == 'Efficiency':
+        parameter = [dipole_efficiency(dipole_radiation_resistance_equation(l),
+                                 dipole_loss_resistance(l)) for l in dl]
+    elif param == 'Directivity':
+        parameter = [dipole_max_directivity_inTimes(l) 
+                       for l in dl]
+    else:
+        print(f"Error {param} param not found!")
+        return 
+    
+    fig = plt.figure()
+    plt.plot(dl, parameter,
+             linewidth=2, color='b',
+             label=fr'{param}')
+    plt.legend(loc='upper left')
+    plt.grid('minor')
+    
 
-    r_radiation_list = [dipole_radiation_resistance_equation(l) 
-                        for l in dl]
-    
-    r_loss = [dipole_loss_resistance(l) 
-              for l in dl]
-    
-    eff = [dipole_efficiency(dipole_radiation_resistance_equation(l),
-                             dipole_loss_resistance(l)) 
-           for l in dl]
-
-    directivity = [dipole_max_directivity_inTimes(l) 
-                   for l in dl]
-    
-    
-    #plt.plot(dl, eff)
-    #plt.plot(dl, r_loss)
-    #plt.plot(dl, r_radiation_list)
-    plt.plot(dl, directivity)
-    #plt.plot(dl, dipole_directivity_indBi(directivity))
 
 def main():
     
-    #plot_parameter()
+    plotParameters = [
+        'Radiation Resistance', 
+        'Loss Resistance',
+        'Efficiency',
+        'Directivity'
+        ]
     
-    ##### Plot polar for all lengths
+    for param in plotParameters:
+        print(f"Ploting {param}....")
+        plot_parameter(param)
+        
+        
     lengths = [0.1, 0.5, 1, 1.25, 1.5]
     mindB = -30
     
     for l in lengths:
-        directivity = dipole_max_directivity_inTimes(l)
-        R_rad = dipole_radiation_resistance_equation(l)
-        R_loss = dipole_loss_resistance(l)
-        efficiency = dipole_efficiency(R_rad, R_loss)
-        polar_plot_dB(l ,mindB, efficiency, directivity)
-   
+        print(f"Printing polar plor for L/lam = {l}")
+        polar_plot_dB(l ,mindB)
+ 
                        
 if __name__ == '__main__':
     main()    
