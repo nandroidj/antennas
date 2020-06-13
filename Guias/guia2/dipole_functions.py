@@ -208,7 +208,7 @@ def monopole_loss_resistance(r_loss_dipole):
     
 '''
 
-def polar_plot_dB(l, mindB):
+def polar_plot_dB(l, mindB, wd):
     #####Parametros
     avoid0 = 0.001
     dtheta = np.linspace(avoid0, 2*pi, 1000)
@@ -240,13 +240,16 @@ def polar_plot_dB(l, mindB):
     ##### Plot
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='polar')
+    
     ax.plot(dtheta, F_g_db,
             label=fr'$L/\lambda$ = {l}',
             color='m', linewidth=2)
     ax.legend(loc='upper right')
     
+    fig.savefig(wd/f"polarplotL_{l}.png", bbox_inches='tight', dpi=150)
+    
 
-def plot_parameter(param):
+def plot_parameter(param, wd):
     
     #### All lengths
     dl = np.arange(0.01,1,0.01)
@@ -269,35 +272,59 @@ def plot_parameter(param):
         return 
     
     fig = plt.figure()
+    
     plt.plot(dl, parameter,
              linewidth=2, color='b',
              label=fr'{param}')
+    
     plt.legend(loc='upper left')
     plt.grid('minor')
+    
+    fig.savefig(wd/f"{param}.png", bbox_inches='tight', dpi=150)
     
 
 
 def main():
     
+    ### Manage paths
+    WORKING_DIR = Path.cwd()
+    IMG_DIR = WORKING_DIR/"Img"
+    ### Check if Img dir exist
+    if not IMG_DIR.is_dir():
+        ### if not exist then create the dir
+        Path.mkdir(IMG_DIR)
+    
+    ### All posible parameters
     plotParameters = [
         'Radiation Resistance', 
         'Loss Resistance',
         'Efficiency',
-        'Directivity'
-        ]
+        'Directivity',
+        'Random To Test Errors'
+    ]
     
+    ### Plot
     for param in plotParameters:
         print(f"Ploting {param}....")
-        plot_parameter(param)
+        plot_parameter(param, IMG_DIR)
         
-        
-    lengths = [0.1, 0.5, 1, 1.25, 1.5]
+    ### All posible length       
+    lengths = [
+        0.1,
+        0.5,
+        1,
+        1.25,
+        1.5
+    ]
+    
+    ### Min dB ploted
     mindB = -30
     
+    ### Plot
     for l in lengths:
-        print(f"Printing polar plor for L/lam = {l}")
-        polar_plot_dB(l ,mindB)
- 
+        print(f"Ploting polar plor for L/lam = {l}")
+        polar_plot_dB(l ,mindB, IMG_DIR)
+        
                        
 if __name__ == '__main__':
     main()    
