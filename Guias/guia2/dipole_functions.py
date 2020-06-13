@@ -100,7 +100,7 @@ def dipole_radiation_function(l, theta_dipole):
 
 def dipole_max_directivity_inTimes(l):
     
-    dipole_max = max((dipole_radiation_function(l, x) for x in range(1,180)))
+    dipole_max = max((dipole_radiation_function(l, x) for x in np.deg2rad(range(1,180))))
   
     func = lambda x, l: dipole_radiation_function(l, x)*np.sin(x)
     r_radiation = integrate.quad(func, 0, pi, args=(l,))[0]
@@ -159,66 +159,63 @@ def dipole_current_distribution(l,z):
     lambda_dipole = length / l
     k = 2*pi / lambda_dipole
     
-    I_positive = I_M * sin(k * (length/2 - z))
-    I_negative = I_M * sin(k * (length/2 + z))
+    if z >= 0:
+        I = I_M * sin(k * (length/2 - z))
+    else: 
+        I = I_M * sin(k * (length/2 + z))
 
-    return I_positive, I_negative
+    return I
 
 
-###################################################################
-######################## MONOPOLE    ##############################
-###################################################################
+##############################################################################################################################
+##################################################################PLOTS#######################################################
+##############################################################################################################################
 
-'''
-    Resistencia de Radiacion - Monopolo
+def plot_current_distribution(l, wd):
+
+    z = np.linspace(-0.5, 0.5, 1000)
+    distribution = [dipole_current_distribution(l ,x) for x in z]
+
+    fig = plt.figure()  
+    plt.plot(z, distribution,
+            linewidth=2, color='r', label=fr'L/\lambda = {l}')
     
-    Input : r_radiacion_dipolo
-    Output : r_radiacion_monopolo
-'''
+    plt.legend(loc='upper right')
+    plt.grid('minor')
 
-def monopole_radiation_resistance(r_radiation_dipole):
+    save_dir = wd/"Dipolo"
+    if not save_dir.is_dir():
+        print(f"{save_dir}: Directory not found! Creating one")
+        Path.mkdir(save_dir)
 
-    return r_radiation_dipole / 2
-
-'''
-    Resistencia de Perdida - Monopolo
+    fig.savefig(save_dir/f"currentDist_{l}.png", bbox_inches='tight', dpi=150)
     
-    Input : r_perdida_monopolo
-    Output : r_perdida_monopolo
-'''
-
-def monopole_loss_resistance(r_loss_dipole):
-
-    return r_loss_dipole / 2
 
 
-'''
-    Rendimiento del Monopolo
-    
-    rendimiento_monopolo = 1/2 * rendimiento_dipolo
-
-    Directividad Monopolo
-    
-    directivida_monopolo = 2 * directividad_monopolo
-    
-    Ganancia Monopolo
-    
-    ganancia_monopolo = 2 * ganancia_dipolo
-    
-    
-'''
-
-def polar_plot_dB(l, mindB, wd):
+def polar_plot_dB(l, mindB, wd, key):
     #####Parametros
-    avoid0 = 0.001
-    dtheta = np.linspace(avoid0, 2*pi, 1000)
     
+    avoid0 = 0.001
+
+    if key == "Dipolo":
+        dtheta = np.linspace(avoid0, 2*pi, 1000)
+    if key == "Monopolo":
+        dtheta = np.linspace(-pi/2, pi/2, 1000)
+
     ## R radation and R loss
     R_rad = dipole_radiation_resistance_equation(l)
     R_loss = dipole_loss_resistance(l)
     
+    if key == "Monopolo":
+        R_rad = np.divide(R_rad, 2)
+        R_loss = np.divide(R_loss, 2)
+
     ## D and eff
     directivity = dipole_max_directivity_inTimes(l)
+
+    if key == "Monopolo":
+        directivity = np.multiply(directivity, 2)
+
     efficiency = dipole_efficiency(R_rad, R_loss)
         
     #### Caluclo de la ganancia
@@ -235,7 +232,7 @@ def polar_plot_dB(l, mindB, wd):
      # values to dB, check if is grather that mindB
     todB = lambda x: 10*np.log10(x)
     F_g_db = [todB(x) if todB(x) > mindB else mindB
-              for x in filteredF ] 
+              for x in filteredF] 
     
     ##### Plot
     fig = plt.figure()
@@ -246,55 +243,107 @@ def polar_plot_dB(l, mindB, wd):
             color='m', linewidth=2)
     ax.legend(loc='upper right')
     
-    fig.savefig(wd/f"polarplotL_{l}.png", bbox_inches='tight', dpi=150)
+    save_dir = wd/f"{key}"
+    if not save_dir.is_dir():
+        print(f"{save_dir}: Directory not found! Creating one")
+        Path.mkdir(save_dir)
+
+    fig.savefig(save_dir/f"polarplotL_{l}.png", bbox_inches='tight', dpi=150)
     
 
-def plot_parameter(param, wd):
+
+def min_max_val(parameter, param, key):
+    minVal = min(parameter)
+    maxVal = max(parameter)
+
+    print(f"| {key} {param} minima | {minVal} |", file=open("data.md","a"))
+    print("|-----------------------|----------|", file=open("data.md","a"))
+    print(f"| {key} {param} maxima | {maxVal} |", file=open("data.md","a"))
+    print("|-----------------------|----------|", file=open("data.md","a"))
+
+def plot_parameter(param, dictionary, wd):
     
     #### All lengths
-    dl = np.arange(0.01,1,0.01)
+
+    for key, value in dictionary.items():    
+        #dl = np.arange(0.01,1,0.01) 
+        dl = value
     
-    
-    if param == 'Radiation Resistance':
-        parameter = [dipole_radiation_resistance_equation(l) 
+        if param == 'Radiation Resistance':
+            parameter = [dipole_radiation_resistance_equation(l) 
                             for l in dl]
-    elif param == 'Loss Resistance': 
-        parameter = [dipole_loss_resistance(l) 
+            if(key == 'Monopolo'):
+               parameter = np.divide(parameter, 2)
+
+            min_max_val(parameter, param, key)
+
+        elif param == 'Loss Resistance': 
+            parameter = [dipole_loss_resistance(l) 
                   for l in dl]
-    elif param == 'Efficiency':
-        parameter = [dipole_efficiency(dipole_radiation_resistance_equation(l),
+
+            if(key == 'Monopolo'):
+                parameter = np.divide(parameter, 2)
+
+            min_max_val(parameter, param, key)
+
+        elif param == 'Efficiency':
+            parameter = [dipole_efficiency(dipole_radiation_resistance_equation(l),
                                  dipole_loss_resistance(l)) for l in dl]
-    elif param == 'Directivity':
-        parameter = [dipole_max_directivity_inTimes(l) 
+            min_max_val(parameter, param, key)
+
+        elif param == 'Directivity':
+            parameter = [dipole_max_directivity_inTimes(l) 
                        for l in dl]
-    else:
-        print(f"Error {param} param not found!")
-        return 
+                        
+            if(key == 'Monopolo'):
+                parameter = np.multiply(parameter, 2)
+
+            min_max_val(parameter, param, key)
+
+        else:
+            print(f"Error {param} param not found!")
+            return 
+       
+       ## Only plot dipolo or monopolo
+        if(key == "Dipolo" or key == "Monopolo"):
+
+            fig = plt.figure()
     
-    fig = plt.figure()
-    
-    plt.plot(dl, parameter,
-             linewidth=2, color='b',
-             label=fr'{param}')
-    
-    plt.legend(loc='upper left')
-    plt.grid('minor')
-    
-    fig.savefig(wd/f"{param}.png", bbox_inches='tight', dpi=150)
+            plt.plot(dl, parameter,
+                    linewidth=2, color='b',
+                    label=fr'{param}')
+            plt.legend(loc='upper left')
+            plt.grid('minor')
+
+            save_dir = wd/f"{key}"
+            if not save_dir.is_dir():
+                print(f"{save_dir}: Directory not found! Creating one")
+                Path.mkdir(save_dir)
+
+            fig.savefig(save_dir/f"{param}.png", bbox_inches='tight', dpi=150)
     
 
 
 def main():
     
-    ### Manage paths
+    ################################# Manage paths #############################
     WORKING_DIR = Path.cwd()
     IMG_DIR = WORKING_DIR/"Img"
     ### Check if Img dir exist
     if not IMG_DIR.is_dir():
         ### if not exist then create the dir
+        print(IMG_DIR, ": Directory not found. Makeing it for you")
         Path.mkdir(IMG_DIR)
+    #############################PARAMETERS#####################################
     
-    ### All posible parameters
+    antennas_t = {
+            "Dipolo": np.arange(0.01,1,0.01), 
+            "Monopolo": np.arange(0.01,1,0.01), 
+            "Dipolo hertz": np.linspace(0.00001, 0.001, 1000),
+            "Dipolo corto": np.linspace(0.01, 0.1, 1000),
+            "Dipolo media": np.linspace(0.001, 0.5, 1000)
+            }
+
     plotParameters = [
         'Radiation Resistance', 
         'Loss Resistance',
@@ -302,13 +351,17 @@ def main():
         'Directivity',
         'Random To Test Errors'
     ]
-    
+   
+    ## Create table markdown file to generate a table wth the values
+    print("| Dato | Valor |", file=open("data.md","a"))
+    print("| ---- | ----- |", file=open("data.md","a"))
+
     ### Plot
     for param in plotParameters:
         print(f"Ploting {param}....")
-        plot_parameter(param, IMG_DIR)
-        
-    ### All posible length       
+        plot_parameter(param, antennas_t, IMG_DIR)
+
+    #################################POLAR PLOT##################################       
     lengths = [
         0.1,
         0.5,
@@ -319,12 +372,26 @@ def main():
     
     ### Min dB ploted
     mindB = -30
-    
     ### Plot
-    for l in lengths:
-        print(f"Ploting polar plor for L/lam = {l}")
-        polar_plot_dB(l ,mindB, IMG_DIR)
-        
-                       
+
+    for key, vals in antennas_t.items():
+        if key == "Dipolo" or key == "Monopolo":
+            for l in lengths:
+                print(f"{key}: Ploting polar plor for L/lam = {l}")
+                polar_plot_dB(l ,mindB, IMG_DIR, key)
+
+    #################################CUrrent Distribution#########################
+    lengths_c = [
+            0.01,
+            0.1,
+            0.5,
+            1
+    ]
+
+    for l in lengths_c:
+        print(f"Ploting current distribution for L/lam = {l}")
+        plot_current_distribution(l,IMG_DIR)
+
 if __name__ == '__main__':
-    main()    
+   main()
+
