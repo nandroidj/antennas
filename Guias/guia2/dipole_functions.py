@@ -343,7 +343,7 @@ def main():
     ### Check if Img dir exist
     if not IMG_DIR.is_dir():
         ### if not exist then create the dir
-        print(IMG_DIR, ": Directory not found. Makeing it for you")
+        print(IMG_DIR, ": Directory not found. Making it for you")
         Path.mkdir(IMG_DIR)
     #############################PARAMETERS#####################################
     
