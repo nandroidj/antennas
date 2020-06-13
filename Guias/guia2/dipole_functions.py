@@ -311,6 +311,8 @@ def plot_parameter(param, dictionary, wd):
             
             parameter = np.multiply(directivity, eff)
 
+            min_max_val(parameter, param, key)
+
         else:
             print(f"Error {param} param not found!")
             return 
@@ -332,7 +334,19 @@ def plot_parameter(param, dictionary, wd):
                 Path.mkdir(save_dir)
 
             fig.savefig(save_dir/f"{param}.png", bbox_inches='tight', dpi=150)
-    
+            ## dB Plot
+            if param == 'Gain': 
+                fig = plt.figure()
+
+                todB = lambda x: 10*np.log10(x)
+                parameter = [todB(float(x)) for x in parameter]
+
+                plt.plot(dl, parameter,
+                    linewidth=2, color='b',
+                    label=fr'{param}')
+                plt.legend(loc='upper left')
+                plt.grid('minor')
+                fig.savefig(save_dir/f"{param}db.png", bbox_inches='tight', dpi=150)
 
 
 def main():
