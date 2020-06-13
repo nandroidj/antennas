@@ -13,6 +13,7 @@ from scipy import integrate
 from sympy import Symbol, cos, sin
 from Crypto.Util.number import size
 from cmath import polar
+from pathlib import Path ## Manejo de directorios
 
 from dictionaries import *
 
@@ -46,8 +47,8 @@ length_monopole = 2*length
 
 def dipole_radiation_resistance_integrand(l,x):
     
-    num = (cos(pi*l*cos(x)) - cos(pi*l))**2
-    den = sin(x)
+    num = (np.cos(pi*l*np.cos(x)) - np.cos(pi*l))**2
+    den = np.sin(x)
     
     return num/den
 
@@ -95,7 +96,7 @@ def dipole_efficiency(l):
         
 def dipole_radiation_function(l,theta_dipole):
 
-    num = cos(pi*l*cos(theta_dipole)/2) - cos(pi*l)
+    num = (cos(pi*l*cos(theta_dipole)/2) - cos(pi*l))
     den = sin(theta_dipole)
     
     # F(theta) = f(theta)^2
@@ -141,9 +142,10 @@ def dipole_gain(l):
 def dipole_expression(l,theta_dipole):
         
     num = 2 * dipole_radiation_function(l,theta_dipole)
+    
     den = integrate.quad(lambda x: dipole_radiation_function(l,x)*sin(x),0,pi)
 
-    return num/(den[0])
+    return num /(den[0])
 
 
 '''
@@ -163,40 +165,22 @@ def dipole_current_distribution(l,z):
     lambda_dipole = length / l
     k = 2*pi / lambda_dipole
     
-    I_positive = I_M * sin(k * (length/2 - z))
-    I_negative = I_M * sin(k * (length/2 + z))
+    if z >= 0:
+        I = I_M * sin(k * (length/2 - z))
+    else: 
+        I = I_M * sin(k * (length/2 + z))
 
-    return I_positive, I_negative
-
+    return I
 
 ###################################################################
 ######################## MONOPOLE    ##############################
 ###################################################################
 
 '''
-    Resistencia de Radiacion - Monopolo
+    r_rad_monopole = r_radiation_dipole / 2
+
+    r_perd_monopole = r_perd_dipole / 2
     
-    Input : r_radiacion_dipolo
-    Output : r_radiacion_monopolo
-'''
-
-def monopole_radiation_resistance(r_radiation_dipole):
-
-    return r_radiation_dipole / 2
-
-'''
-    Resistencia de Perdida - Monopolo
-    
-    Input : r_perdida_monopolo
-    Output : r_perdida_monopolo
-'''
-
-def monopole_loss_resistance(r_loss_dipole):
-
-    return r_loss_dipole / 2
-
-
-'''
     Rendimiento del Monopolo
     
     rendimiento_monopolo = 1/2 * rendimiento_dipolo
@@ -220,7 +204,7 @@ def monopole_loss_resistance(r_loss_dipole):
 '''    
 def evaluate_parameters():
     
-    theta_dipole = np.arange(0,pi, 0.1)
+    theta_dipole = np.arange(0.01,pi, 0.5)
     
     for key, value in dipole_dictionary.items():
         for v in value:
@@ -230,23 +214,163 @@ def evaluate_parameters():
             directivity_dictionary[key].append(dipole_max_directivity_inTimes(v))
             directivity_dbi_dictionary[key].append(dipole_directivity_indBi(v))
             gain_dictionary[key].append(dipole_max_directivity_inTimes(v))
-            
-            for theta in theta_dipole:
-                dipole_expression_dictionary[key].append(dipole_expression(v, theta))
-        
+
+#            for theta in theta_dipole:
+#               dipole_expression_dictionary[key].append(dipole_expression(v, theta))
+
+def plot_dipole_parameters(wd):               
+
+    for key_dipole in dipole_dictionary.keys():
+
+        for key_r_radiation in r_radiation_dictionary.keys():
+
+            if key_dipole == key_r_radiation:       
+                plt.figure()
+                plt.ion()
+                plt.xlabel('L/lambda')
+                plt.ylabel(key_r_radiation + ' ' + '[Ohm]')
+                plt.plot(dipole_dictionary[key_dipole], r_radiation_dictionary[key_r_radiation])
+                plt.grid()
+                plt.ioff()
+                plt.savefig(wd/f"{key_dipole}_r_radiation_dipole.png", bbox_inches='tight', dpi=150)
+
+        for key_loss in loss_resistance_dictionary.keys():
+
+            if key_dipole == key_loss:       
+                plt.figure()
+                plt.ion()
+                plt.xlabel('L/lambda')
+                plt.ylabel(key_loss + ' ' + '[Ohm]')
+                plt.plot(dipole_dictionary[key_dipole], loss_resistance_dictionary[key_loss])
+                plt.grid()
+                plt.ioff()
+                plt.savefig(wd/f"{key_dipole}_r_loss_dipole.png", bbox_inches='tight', dpi=150)
+
+        for key_efficiency in efficiency_dictionary.keys():
+
+            if key_dipole == key_efficiency:       
+                plt.figure()
+                plt.ion()
+                plt.xlabel('L/lambda')
+                plt.ylabel('Rendimiento' + ' ' + '[%]')
+                plt.plot(dipole_dictionary[key_dipole], efficiency_dictionary[key_efficiency])
+                plt.grid()
+                plt.ioff()
+                plt.savefig(wd/f"{key_dipole}_efficiency_dipole.png", bbox_inches='tight', dpi=150)
+
+        for key_directivity in directivity_dictionary.keys():
+
+            if key_dipole == key_directivity:       
+                plt.figure()
+                plt.ion()
+                plt.xlabel('L/lambda')
+                plt.ylabel('Directividad' + ' ' + '[veces]')
+                plt.plot(dipole_dictionary[key_dipole], directivity_dictionary[key_directivity])
+                plt.grid()
+                plt.ioff()
+                plt.savefig(wd/f"{key_dipole}_directivity_dipole.png", bbox_inches='tight', dpi=150)
+
+        for key_directivity_dbi in directivity_dbi_dictionary.keys():
+
+            if key_dipole == key_directivity_dbi:       
+                plt.figure()
+                plt.ion()
+                plt.xlabel('L/lambda')
+                plt.ylabel('Directividad' + ' ' + '[dBi]')
+                plt.plot(dipole_dictionary[key_dipole], directivity_dbi_dictionary[key_directivity_dbi])
+                plt.grid()
+                plt.ioff()
+                plt.savefig(wd/f"{key_dipole}_directivity_dbi_dipole.png", bbox_inches='tight', dpi=150)
 
 
+def plot_monopole_parameters(wd):
 
-def plot_parameters():               
+    plt.figure()
+    plt.ion()
+    plt.xlabel('L/lambda')
+    plt.ylabel('dipole_pure' + ' ' + '[Ohm]')
+    plt.plot(dipole_dictionary['dipole_pure'], [x / 2 for x in r_radiation_dictionary['dipole_pure']])
+    plt.grid()
+    plt.ioff()
+    plt.savefig(wd/f"{'dipole_pure'}_r_radiation_monopole.png", bbox_inches='tight', dpi=150)
+
+    plt.figure()
+    plt.ion()
+    plt.xlabel('L/lambda')
+    plt.ylabel('dipole_pure' + ' ' + '[Ohm]')
+    plt.plot(dipole_dictionary['dipole_pure'], [x / 2 for x in loss_resistance_dictionary['dipole_pure']])
+    plt.grid()
+    plt.ioff()
+    plt.savefig(wd/f"{'dipole_pure'}_r_loss_monopole.png", bbox_inches='tight', dpi=150)
+
+    plt.figure()
+    plt.ion()
+    plt.xlabel('L/lambda')
+    plt.ylabel('Rendimiento' + ' ' + '[%]')
+    plt.plot(dipole_dictionary['dipole_pure'], [x / 2 for x in efficiency_dictionary['dipole_pure']])
+    plt.grid()
+    plt.ioff()
+    plt.savefig(wd/f"{'dipole_pure'}_efficiency_monopole.png", bbox_inches='tight', dpi=150)
+
+    plt.figure()
+    plt.ion()
+    plt.xlabel('L/lambda')
+    plt.ylabel('Directividad' + ' ' + '[veces]')
+    plt.plot(dipole_dictionary['dipole_pure'], [x * 2 for x in directivity_dictionary['dipole_pure']])
+    plt.grid()
+    plt.ioff()
+    plt.savefig(wd/f"{'dipole_pure'}_directivity_monopole.png", bbox_inches='tight', dpi=150)
+
+    plt.figure()
+    plt.ion()
+    plt.xlabel('L/lambda')
+    plt.ylabel('Directividad' + ' ' + '[dBi]')
+    plt.plot(dipole_dictionary['dipole_pure'], [x * 2 for x in directivity_dbi_dictionary['dipole_pure']])
+    plt.grid()
+    plt.ioff()
+    plt.savefig(wd/f"{'dipole_pure'}_directivity_dbi_monopole.png", bbox_inches='tight', dpi=150)
+
+
+def plot_current_distribution(l, wd):
+
+    z = np.linspace(-0.5, 0.5, 1000)
+    distribution = [dipole_current_distribution(l ,x) for x in z]
+
+    fig = plt.figure()
+    plt.plot(z, distribution,
+            linewidth=2, color='r', label=fr'L/\lambda = {l}')
     
-    plt.plot(dipole_dictionary['dipole_pure'], r_radiation_dictionary['dipole_pure'])
-    plt.show()
+    plt.legend(loc='upper right')
+    plt.grid('minor')
 
-              
+    save_dir = wd/"Dipolo"
+    if not save_dir.is_dir():
+        print(f"{save_dir}: Directory not found! Creating one")
+        Path.mkdir(save_dir)
+
+    fig.savefig(save_dir/f"currentDist_{l}.png", bbox_inches='tight', dpi=150)
+    
+ 
 def main():
+
+    WORKING_DIR = Path.cwd()
+    IMG_DIR = WORKING_DIR/"imgs"
     
     evaluate_parameters()   
-    
+    plot_dipole_parameters(IMG_DIR)
+    plot_monopole_parameters(IMG_DIR)
+
+'''    
+    lengths_c = [
+            0.01,
+            0.1,
+            0.5,
+            1
+    ]
+
+    for l in lengths_c:
+        plot_current_distribution(l,IMG_DIR)    
+'''
     
 if __name__ == '__main__':
     main()    
