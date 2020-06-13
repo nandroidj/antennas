@@ -12,6 +12,9 @@ import matplotlib.pyplot as plt
 from scipy import integrate
 from sympy import Symbol, cos, sin
 from Crypto.Util.number import size
+from cmath import polar
+
+from dictionaries import *
 
 pi = math.pi
 c = 3e8
@@ -20,7 +23,7 @@ c = 3e8
 length = 1 # m
 radio = 1 # mm
 sigma = 5.8e7 # S/m
-mu = 4*pi*10^(-7)
+mu = 4*pi*1e-7
 
 # Datos del monopolo
 # radio y conductividad idem dipolo
@@ -40,6 +43,7 @@ length_monopole = 2*length
     output : resistencia de radiacion
 '''
 
+
 def dipole_radiation_resistance_integrand(l,x):
     
     num = (cos(pi*l*cos(x)) - cos(pi*l))**2
@@ -47,11 +51,12 @@ def dipole_radiation_resistance_integrand(l,x):
     
     return num/den
 
+
 def dipole_radiation_resistance_equation(l):
     
-    r_radiation = 60 * integrate.quad(lambda x: dipole_radiation_resistance_integrand(l,x), 0, pi)
+    r_radiation = integrate.quad(lambda x: dipole_radiation_resistance_integrand(l,x), 0, pi)
 
-    return r_radiation
+    return 60 * r_radiation[0]
 
 
 '''
@@ -76,9 +81,9 @@ def dipole_loss_resistance(l):
     rendimiento = resistencia_radiacion / (resistencia_perdidas + resistencia_radiacion)
 '''
 
-def dipole_efficiency(r_radiation_value, r_loss_value):
+def dipole_efficiency(l):
     
-    return r_radiation_value / (r_radiation_value + r_loss_value)
+    return dipole_radiation_resistance_equation(l) / (dipole_radiation_resistance_equation(l) + dipole_loss_resistance(l))
     
 
 '''
@@ -96,17 +101,19 @@ def dipole_radiation_function(l,theta_dipole):
     # F(theta) = f(theta)^2
     return (num/den)**2
 
-def dipole_max_directivity_inTimes(l, r_radiation):
+def dipole_max_directivity_inTimes(l):
     
     # max when theta = 90 deg
     theta_dipole = 90 # deg
     
-    return 120 * dipole_radiation_function(l,theta_dipole) / r_radiation
+    return 120 * dipole_radiation_function(l,theta_dipole) / dipole_radiation_resistance_equation(l)
     
 
-def dipole_directivity_indBi(directivity_value):
+def dipole_directivity_indBi(l):
     
-    return 10*np.log10(directivity_value)
+    in_times = dipole_max_directivity_inTimes(l)
+    
+    return 10 * math.log10(in_times)
 
 
 '''
@@ -116,10 +123,11 @@ def dipole_directivity_indBi(directivity_value):
     ouput : gain_value
 '''    
 
-def dipole_gain(directivity_value, efficiency_value):
+def dipole_gain(l):
 
-    return directivity_value * efficiency_value;
+#    return directivity_value * efficiency_value;
 
+    return dipole_max_directivity_inTimes(l) * dipole_efficiency(l)
 
 '''
     Directivity expression
@@ -129,13 +137,13 @@ def dipole_gain(directivity_value, efficiency_value):
     Input: dipole_radiation_function
     Output: directivity_value
 '''
+ 
+def dipole_expression(l,theta_dipole):
+        
+    num = 2 * dipole_radiation_function(l,theta_dipole)
+    den = integrate.quad(lambda x: dipole_radiation_function(l,x)*sin(x),0,pi)
 
-def dipole_expression(l, theta_dipole):
-    
-    num = 2*dipole_radiation_function
-    den = integrate.quad(lambda theta_dipole: dipole_radiation_function*sin(theta_dipole),0,pi)
-    
-    return num/den
+    return num/(den[0])
 
 
 '''
@@ -146,8 +154,7 @@ def dipole_expression(l, theta_dipole):
     Input : length_factor
     Output : current_distribution_value
     
-    
-    VER COMO EVALUAR I entre 0 y L/2 y -L/2 y 0
+    VER COMO EVALUAR I entre [-L/2 ; 0] y [0 ; L/2]  
 '''
 
 def dipole_current_distribution(l,z):
@@ -206,39 +213,41 @@ def monopole_loss_resistance(r_loss_dipole):
 '''
 
 
-
-
-
-
-
-
-
-def plot_parameter():
+ 
+'''
+    recibir func y el diccionario pertinente a plotear en la llamada de
+    cada funcion tipo r_radiation, directivity
+'''    
+def evaluate_parameters():
     
-    dl = np.arange(0.01,1,0.1)
-    r_radiation_list = []
+    theta_dipole = np.arange(0,pi, 0.1)
     
-    for l in dl:
-        r_radiation_list.append(radiation_resistance_equation(l))
+    for key, value in dipole_dictionary.items():
+        for v in value:
+            r_radiation_dictionary[key].append(dipole_radiation_resistance_equation(v))
+            loss_resistance_dictionary[key].append(dipole_loss_resistance(v))
+            efficiency_dictionary[key].append(dipole_loss_resistance(v))
+            directivity_dictionary[key].append(dipole_max_directivity_inTimes(v))
+            directivity_dbi_dictionary[key].append(dipole_directivity_indBi(v))
+            gain_dictionary[key].append(dipole_max_directivity_inTimes(v))
+            
+            for theta in theta_dipole:
+                dipole_expression_dictionary[key].append(dipole_expression(v, theta))
+        
 
 
-    print(r_radiation_list)
 
-    plt.ion()
-    plt.figure()
+def plot_parameters():               
     
-    plt.plot(dl, r_radiation_list)
-
-    plt.ioff()
+    plt.plot(dipole_dictionary['dipole_pure'], r_radiation_dictionary['dipole_pure'])
     plt.show()
-    
-
 
               
 def main():
     
-    plot_parameter()
+    evaluate_parameters()   
     
     
 if __name__ == '__main__':
     main()    
+    
