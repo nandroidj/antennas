@@ -9,6 +9,8 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
+from pathlib import Path ## Manejo de directorios
+
 from scipy import integrate
 from sympy import Symbol, cos, sin
 from Crypto.Util.number import size
@@ -18,13 +20,13 @@ c = 3e8
 
 # Datos del dipolo
 length = 1 # m
-radio = 1 # mm
+radio = 1e-3 # mm
 sigma = 5.8e7 # S/m
-mu = 4*pi*10^(-7)
+mu = 4*pi*1e-7
 
 # Datos del monopolo
 # radio y conductividad idem dipolo
-heigth = 1/2 #m
+heigth = 1/2 #
 length_monopole = 2*length
 
 
@@ -40,18 +42,19 @@ length_monopole = 2*length
     output : resistencia de radiacion
 '''
 
-def dipole_radiation_resistance_integrand(l,x):
-    
-    num = (cos(pi*l*cos(x)) - cos(pi*l))**2
-    den = sin(x)
+def dipole_radiation_resistance_integrand(x,l):
+
+    num = ((np.cos(pi*l*np.cos(x)) - np.cos(pi*l))**2)
+    den = np.sin(x)
     
     return num/den
 
 def dipole_radiation_resistance_equation(l):
     
-    r_radiation = 60 * integrate.quad(lambda x: dipole_radiation_resistance_integrand(l,x), 0, pi)
+    r_radiation = integrate.quad(lambda x, l: dipole_radiation_resistance_integrand(x,l),
+                                      0, 3.14, args=(l,))
 
-    return r_radiation
+    return 60 * r_radiation[0]
 
 
 '''
@@ -63,10 +66,10 @@ def dipole_radiation_resistance_equation(l):
 
 def dipole_loss_resistance(l):
     
-    termino_1 = length**1/2 / (2*pi*radio)
-    termino_2 = (pi*c*mu/sigma)**1/2
-    termino_3 = l**1/2
-    termino_4 = 1- (sin(2*pi*l)/ (2*pi*l))
+    termino_1 = ((length)**(1/2) / (2*pi*radio))
+    termino_2 = ((pi*c*mu)/sigma)**(1/2)
+    termino_3 = l**(1/2)
+    termino_4 = (1 - (sin(2*pi*l) / (2*pi*l)))
 
     return termino_1 * termino_2 * termino_3 * termino_4
 
@@ -88,24 +91,24 @@ def dipole_efficiency(r_radiation_value, r_loss_value):
     ouput : directivity value
 '''
         
-def dipole_radiation_function(l,theta_dipole):
+def dipole_radiation_function(l, theta_dipole):
 
-    num = cos(pi*l*cos(theta_dipole)/2) - cos(pi*l)
-    den = sin(theta_dipole)
+    num = (np.cos(pi*l*np.cos(theta_dipole)) - np.cos(pi*l))
+    den = np.sin(theta_dipole)
     
-    # F(theta) = f(theta)^2
     return (num/den)**2
 
-def dipole_max_directivity_inTimes(l, r_radiation):
+def dipole_max_directivity_inTimes(l):
     
-    # max when theta = 90 deg
-    theta_dipole = 90 # deg
-    
-    return 120 * dipole_radiation_function(l,theta_dipole) / r_radiation
+    dipole_max = max((dipole_radiation_function(l, x) for x in range(1,180)))
+  
+    func = lambda x, l: dipole_radiation_function(l, x)*np.sin(x)
+    r_radiation = integrate.quad(func, 0, pi, args=(l,))[0]
+      
+    return 2 * dipole_max / r_radiation
     
 
 def dipole_directivity_indBi(directivity_value):
-    
     return 10*np.log10(directivity_value)
 
 
@@ -205,40 +208,123 @@ def monopole_loss_resistance(r_loss_dipole):
     
 '''
 
-
-
-
-
-
-
-
-
-def plot_parameter():
+def polar_plot_dB(l, mindB, wd):
+    #####Parametros
+    avoid0 = 0.001
+    dtheta = np.linspace(avoid0, 2*pi, 1000)
     
-    dl = np.arange(0.01,1,0.1)
-    r_radiation_list = []
+    ## R radation and R loss
+    R_rad = dipole_radiation_resistance_equation(l)
+    R_loss = dipole_loss_resistance(l)
     
-    for l in dl:
-        r_radiation_list.append(radiation_resistance_equation(l))
-
-
-    print(r_radiation_list)
-
-    plt.ion()
-    plt.figure()
+    ## D and eff
+    directivity = dipole_max_directivity_inTimes(l)
+    efficiency = dipole_efficiency(R_rad, R_loss)
+        
+    #### Caluclo de la ganancia
+    # Hay que castear a float para usar np.log10()
+    gain = float(directivity * efficiency)
     
-    plt.plot(dl, r_radiation_list)
+    # lambda fucntion G*F() 
+    # List comprehension gF fot all theta in dtheta
+    gF = lambda x: abs(gain*dipole_radiation_function(l, x))
+    F = [gF(theta) for theta in dtheta]
+    
+    # filtered 0 values in F
+    filteredF = [x if x != 0 else x+avoid0 for x in F]
+     # values to dB, check if is grather that mindB
+    todB = lambda x: 10*np.log10(x)
+    F_g_db = [todB(x) if todB(x) > mindB else mindB
+              for x in filteredF ] 
+    
+    ##### Plot
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='polar')
+    
+    ax.plot(dtheta, F_g_db,
+            label=fr'$L/\lambda$ = {l}',
+            color='m', linewidth=2)
+    ax.legend(loc='upper right')
+    
+    fig.savefig(wd/f"polarplotL_{l}.png", bbox_inches='tight', dpi=150)
+    
 
-    plt.ioff()
-    plt.show()
+def plot_parameter(param, wd):
+    
+    #### All lengths
+    dl = np.arange(0.01,1,0.01)
+    
+    
+    if param == 'Radiation Resistance':
+        parameter = [dipole_radiation_resistance_equation(l) 
+                            for l in dl]
+    elif param == 'Loss Resistance': 
+        parameter = [dipole_loss_resistance(l) 
+                  for l in dl]
+    elif param == 'Efficiency':
+        parameter = [dipole_efficiency(dipole_radiation_resistance_equation(l),
+                                 dipole_loss_resistance(l)) for l in dl]
+    elif param == 'Directivity':
+        parameter = [dipole_max_directivity_inTimes(l) 
+                       for l in dl]
+    else:
+        print(f"Error {param} param not found!")
+        return 
+    
+    fig = plt.figure()
+    
+    plt.plot(dl, parameter,
+             linewidth=2, color='b',
+             label=fr'{param}')
+    
+    plt.legend(loc='upper left')
+    plt.grid('minor')
+    
+    fig.savefig(wd/f"{param}.png", bbox_inches='tight', dpi=150)
     
 
 
-              
 def main():
     
-    plot_parameter()
+    ### Manage paths
+    WORKING_DIR = Path.cwd()
+    IMG_DIR = WORKING_DIR/"Img"
+    ### Check if Img dir exist
+    if not IMG_DIR.is_dir():
+        ### if not exist then create the dir
+        Path.mkdir(IMG_DIR)
     
+    ### All posible parameters
+    plotParameters = [
+        'Radiation Resistance', 
+        'Loss Resistance',
+        'Efficiency',
+        'Directivity',
+        'Random To Test Errors'
+    ]
     
+    ### Plot
+    for param in plotParameters:
+        print(f"Ploting {param}....")
+        plot_parameter(param, IMG_DIR)
+        
+    ### All posible length       
+    lengths = [
+        0.1,
+        0.5,
+        1,
+        1.25,
+        1.5
+    ]
+    
+    ### Min dB ploted
+    mindB = -30
+    
+    ### Plot
+    for l in lengths:
+        print(f"Ploting polar plor for L/lam = {l}")
+        polar_plot_dB(l ,mindB, IMG_DIR)
+        
+                       
 if __name__ == '__main__':
     main()    
