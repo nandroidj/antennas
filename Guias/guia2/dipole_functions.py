@@ -9,6 +9,8 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
+from pathlib import Path ## Manejo de directorios
+
 from scipy import integrate
 from sympy import Symbol, cos, sin
 from Crypto.Util.number import size
@@ -89,24 +91,24 @@ def dipole_efficiency(r_radiation_value, r_loss_value):
     ouput : directivity value
 '''
         
-def dipole_radiation_function(l,theta_dipole):
+def dipole_radiation_function(l, theta_dipole):
 
-    num = cos(pi*l*cos(theta_dipole)/2) - cos(pi*l)
-    den = sin(theta_dipole)
+    num = (np.cos(pi*l*np.cos(theta_dipole)) - np.cos(pi*l))
+    den = np.sin(theta_dipole)
     
-    # F(theta) = f(theta)^2
     return (num/den)**2
 
-def dipole_max_directivity_inTimes(l, r_radiation):
+def dipole_max_directivity_inTimes(l):
     
-    # max when theta = 90 deg
-    theta_dipole = 90 # deg
-    
-    return 120 * dipole_radiation_function(l,theta_dipole) / r_radiation
+    dipole_max = max((dipole_radiation_function(l, x) for x in range(1,180)))
+  
+    func = lambda x, l: dipole_radiation_function(l, x)*np.sin(x)
+    r_radiation = integrate.quad(func, 0, pi, args=(l,))[0]
+      
+    return 2 * dipole_max / r_radiation
     
 
 def dipole_directivity_indBi(directivity_value):
-    
     return 10*np.log10(directivity_value)
 
 
@@ -206,24 +208,76 @@ def monopole_loss_resistance(r_loss_dipole):
     
 '''
 
-
+def polar_plot_dB(l, mindB, efficiency, directivity):
+    #####Parametros
+    avoid0 = 0.001
+    dtheta = np.linspace(avoid0, 2*pi, 1000)
+    
+    #### Caluclo de la ganancia
+    # Hay que castear a float para usar np.log10()
+    gain = float(directivity * efficiency)
+    
+    # lambda fucntion G*F() 
+    # List comprehension gF fot all theta in dtheta
+    gF = lambda x: abs(gain*dipole_radiation_function(l, x))
+    F = [gF(theta) for theta in dtheta]
+    
+    # filtered 0 values in F
+    filteredF = [x if x != 0 else x+avoid0 for x in F]
+     # values to dB, check if is grather that mindB
+    todB = lambda x: 10*np.log10(x)
+    F_g_db = [todB(x) if todB(x) > mindB else mindB
+              for x in filteredF ] 
+    
+    ##### Plot
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='polar')
+    ax.plot(dtheta, F_g_db, label=fr'$L/\lambda$ = {l}', color='m')
+    ax.legend(loc='upper right')
+    
 
 def plot_parameter():
     
+    #### All lengths
     dl = np.arange(0.01,1,0.01)
-    r_radiation_list = [dipole_radiation_resistance_equation(l) for l in dl]
     
-    r_loss = [dipole_loss_resistance(l) for l in dl]
-
-    plt.plot(dl, r_loss)
     
-    plt.plot(dl, r_radiation_list)
 
+    r_radiation_list = [dipole_radiation_resistance_equation(l) 
+                        for l in dl]
+    
+    r_loss = [dipole_loss_resistance(l) 
+              for l in dl]
+    
+    eff = [dipole_efficiency(dipole_radiation_resistance_equation(l),
+                             dipole_loss_resistance(l)) 
+           for l in dl]
+
+    directivity = [dipole_max_directivity_inTimes(l) 
+                   for l in dl]
+    
+    
+    #plt.plot(dl, eff)
+    #plt.plot(dl, r_loss)
+    #plt.plot(dl, r_radiation_list)
+    plt.plot(dl, directivity)
+    #plt.plot(dl, dipole_directivity_indBi(directivity))
 
 def main():
     
-    plot_parameter()
-
+    #plot_parameter()
     
+    ##### Plot polar for all lengths
+    lengths = [0.1, 0.5, 1, 1.25, 1.5]
+    mindB = -30
+    
+    for l in lengths:
+        directivity = dipole_max_directivity_inTimes(l)
+        R_rad = dipole_radiation_resistance_equation(l)
+        R_loss = dipole_loss_resistance(l)
+        efficiency = dipole_efficiency(R_rad, R_loss)
+        polar_plot_dB(l ,mindB, efficiency, directivity)
+   
+                       
 if __name__ == '__main__':
     main()    
