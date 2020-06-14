@@ -4,8 +4,12 @@ Process data
 import numpy as np
 from pathlib import Path
 
-from plots import plot_smith_chart
+from plots import plot_smith_chart,\
+                  plot_roe, plot_coef_reflexion,\
+                  plot_real_imag
+
 from files import read_data
+
 from anntena import impedance,\
                     get_real_imag_parts,\
                     reflexion_coef_db,\
@@ -59,6 +63,18 @@ def process_s1p_files(anntenas_t, files_sp1, IMAGES):
         ###############################################
         
         ###################PLOTS#######################
-        print(f"Ploting Smith Chart for {ANNTENA_DIR.stem} anntena")
+        print("---------------------------")
+        print(f"{ANNTENA_DIR.stem.upper()} anntena")
+        print("---------------------------")
+        print("Ploting Smith Chart")
         plot_smith_chart(s11, ANNTENA_DIR)
+        print("ploting ROE ") 
+        plot_roe(onda_estacionaria,freq, ANNTENA_DIR)
+        print("ploting Reflexion Coef ") 
+        plot_coef_reflexion(refelxion_coef_mod_db, freq, ANNTENA_DIR)
+        print("ploting Real Imag Parts ") 
+        plot_real_imag(realPart, imagPart, freq, ANNTENA_DIR)
+
+
+
 
