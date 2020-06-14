@@ -50,9 +50,10 @@ def process_data(data):
 
     freq = [float(x[0]) for x in data[OFFSET:]]
     # TODO: If the params are in dB transform them ?  
-    # if data[OFFSET-1][0].split(' ')[3] == 'DB':
-
-    arrToComplex = lambda x: float(x[1]) + 1j*float(x[2])
+    if data[OFFSET-1][0].split(' ')[3] == 'DB':
+        arrToComplex = lambda x: 10**(float(x[1])/10) + 1j*10**(float(x[2])/10)
+    else:
+        arrToComplex = lambda x: float(x[1]) + 1j*float(x[2])
     s11 = [arrToComplex(x) for x in data[OFFSET:]]
 
     return freq, s11
@@ -91,39 +92,49 @@ def roe(s_parameter):
 
 ################################## MAIN PROGRAM ##########################################
 def main():
+    ####### Dictrionary
+    # Map file stem to anntena 
+    anntenas_t = {
+        'AutoSave1': 'Biquad',
+        'AutoSave2': 'Parche',
+        'AutoSave3': 'Clindrica'
+    }
+
     # Directories
     WORKING_DIR = Path.cwd()
+    IMAGES = WORKING_DIR.parent/"Img"
     MEDICIONES = WORKING_DIR.parent/"Mediciones" 
 
     # Generator of all the AutoSaveN.s1p file
-    # A generator is an lazy iterable object
-    files_sp1 = [MEDICIONES/f"AutoSave{x}.s1p" for x in range(1,4)]
+    # A generator is a lazy iterable object
+    files_sp1 = (MEDICIONES/f"AutoSave{x}.s1p" for x in range(1,4))
     
     ## For every file get the data and plot it
     for location in files_sp1:
-        
         ## Process data get s11 and freq
         data = read_data(location, '\t')
         freq, s11 =  process_data(data)
-       
         ## Calculo de la impedancia
         zl = impedance(s11, 50)
         realPart, imagPart = get_real_imag_parts(zl)
-       
         ## Coeficiente de reflexion
         refelxion_coef_mod_db = reflexion_coef_db(s11)
-        
         ## Calculo de ROE
         onda_estacionaria = roe(s11)
+        
+        ######################dirs####################
+        if not IMAGES.is_dir():
+            IMAGES.mkdir()
 
+        ANNTENA_DIR = IMAGES/f"{anntenas_t[location.stem]}"
+    
+        if not ANNTENA_DIR.is_dir():
+            ANNTENA_DIR.mkdir()
+        ###############################################
 
-
-        ## Plot 
-        pp.plot(freq, onda_estacionaria) 
-        #pp.plot(freq, realPart)
-        #pp.plot(freq, imagPart)
+        ## TODO: Hay que hacer las funciones de los Plot 
+        pp.plot(freq[500:], onda_estacionaria[500:])
         pp.show()
-        ### Plots
         #plot_smith_chart(s11, "nd")
 
 
