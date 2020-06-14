@@ -25,7 +25,7 @@ def read_data(location, delimiter):
 
     for line in file:
         try:
-            data += [line.split('\t')]
+            data += [line.split(delimiter)]
         except:
             pass
 
