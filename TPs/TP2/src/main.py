@@ -7,6 +7,9 @@ from pathlib import Path
 from smithplot import SmithAxes
 from matplotlib import pyplot as pp 
 
+#from pylab import *
+#import skrf as rf 
+
 # TODO: Lectura de los archivos de medición con los distintos parámetors
 
 def read_data(location, delimiter):
@@ -35,12 +38,12 @@ def plot_smith_chart(s_params, save_dir):
     """
     ## Plot
     SmithAxes.update_scParams(axes_impedance=50)
-    pp.figure(figsize=(6, 6))
+    fig = pp.figure(figsize=(6, 6))
     ax = pp.subplot(1, 1, 1, projection='smith', grid_major_enable=True)
     pp.plot(s_params, datatype=SmithAxes.S_PARAMETER)
 
-    # TODO: Save plot
-    pp.show()    
+    fig.savefig(save_dir / 'smithChart.png',
+                bbox_inches='tight', dpi=150)
 
 
 def process_data(data):
@@ -49,11 +52,15 @@ def process_data(data):
     OFFSET = 8
 
     freq = [float(x[0]) for x in data[OFFSET:]]
-    # TODO: If the params are in dB transform them ?  
+    # If the data set is in dB, then we have info about
+    # magnitude in dB and phase in deg
     if data[OFFSET-1][0].split(' ')[3] == 'DB':
-        arrToComplex = lambda x: 10**(float(x[1])/10) + 1j*10**(float(x[2])/10)
+        arrToComplex = lambda x: \
+                np.sqrt((10**(float(x[1])/10.0))) * \
+                (np.cos(np.deg2rad(float(x[2]))) + 1j*np.sin(np.deg2rad(float(x[2]))))
     else:
         arrToComplex = lambda x: float(x[1]) + 1j*float(x[2])
+
     s11 = [arrToComplex(x) for x in data[OFFSET:]]
 
     return freq, s11
@@ -108,9 +115,10 @@ def main():
     # Generator of all the AutoSaveN.s1p file
     # A generator is a lazy iterable object
     files_sp1 = (MEDICIONES/f"AutoSave{x}.s1p" for x in range(1,4))
-    
+
     ## For every file get the data and plot it
     for location in files_sp1:
+
         ## Process data get s11 and freq
         data = read_data(location, '\t')
         freq, s11 =  process_data(data)
@@ -131,12 +139,10 @@ def main():
         if not ANNTENA_DIR.is_dir():
             ANNTENA_DIR.mkdir()
         ###############################################
-
-        ## TODO: Hay que hacer las funciones de los Plot 
-        pp.plot(freq[500:], onda_estacionaria[500:])
-        pp.show()
-        #plot_smith_chart(s11, "nd")
-
+        
+        ###################PLOTS#######################
+        print(f"Ploting Smith Chart for {ANNTENA_DIR.stem} anntena")
+        plot_smith_chart(s11, ANNTENA_DIR)
 
 ###########################
 if __name__ == "__main__":
