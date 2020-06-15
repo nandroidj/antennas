@@ -1,31 +1,36 @@
 import matplotlib.pyplot as pp
 
 from pathlib import Path
-from importlib_metadata.tests import data
+from numpy import pi, arange
 
-def main():
-    
-    OFFSET = 216
+from plots import polar_plot
+from importlib_metadata.tests import data
+from files import read_data
+
+def process_trc(save_dir):
 
     WORKING_DIR = Path.cwd()
     MEDICIONES = WORKING_DIR.parent/"Mediciones"
     
-    data = []
-    file = open(MEDICIONES/"plano_phi_0_medicion.TRC", 'r')
+    files_name = [
+        "plano_phi_0_medicion.TRC",
+        "plano_phi_90_medicion.TRC"
+    ]
     
-    for line in file:
-        try:
-            data += [line.split(',')]
-        except:
-            pass
+    for fname in files_name:
+
+        data = read_data(MEDICIONES/fname, ',')
+
+        OFFSET = 216
+        gain = [float(x[0]) for x in data[OFFSET:]]
     
-    parameter = [float(x[0]) for x in data[OFFSET:]]
-
-    pp.plot(parameter)
-    pp.show()
-
-    print(parameter)
-
+        maxG = max(gain)
+        gain = [x - maxG for x in gain]
+    
+        step = 2*pi / len(gain)
+        theta = arange(0, 2*pi, step)
+    
+        polar_plot(theta, gain, "nop")
 
 if __name__ == '__main__':
-    main()
+    process_trc("nop")

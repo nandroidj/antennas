@@ -49,3 +49,13 @@ def plot_real_imag(realPart, imagPart, freq, save_dir):
     pp.grid()
     fig.savefig(save_dir / 'realImag.png',
             bbox_inches='tight', dpi=150)
+
+
+def polar_plot(theta, gain, save_dir):
+
+    fig = pp.figure()
+    ax = fig.add_subplot(111, projection='polar')
+    
+    ax.plot(theta, gain,
+            color='m', linewidth=2)
+    pp.show() 
