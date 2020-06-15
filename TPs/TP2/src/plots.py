@@ -28,7 +28,7 @@ def plot_roe(roe, freq, save_dir):
     fig = pp.figure()
     pp.plot(freq, roe, linewidth=2, color='r')
     pp.ylim((0, 9))
-    pp.grid('minor')
+    pp.grid()
     pp.xlabel(r'f[Hz]')
     fig.savefig(save_dir / 'roe.png',
             bbox_inches='tight', dpi=150)
@@ -36,7 +36,7 @@ def plot_roe(roe, freq, save_dir):
 def plot_coef_reflexion(coef, freq, save_dir):
     fig = pp.figure()
     pp.plot(freq, coef, linewidth=2, color='m')
-    pp.grid('minor')
+    pp.grid()
     pp.xlabel(r'f[Hz]')
     fig.savefig(save_dir / 'ceofReflexion.png', 
             bbox_inches='tight', dpi=150)
@@ -46,6 +46,6 @@ def plot_real_imag(realPart, imagPart, freq, save_dir):
     pp.plot(freq, realPart, linewidth=2, color='b')
     pp.plot(freq, imagPart, linewidth=2, color='m')
     pp.xlabel(r'f[Hz]')
-    pp.grid('minor')
+    pp.grid()
     fig.savefig(save_dir / 'realImag.png',
             bbox_inches='tight', dpi=150)
