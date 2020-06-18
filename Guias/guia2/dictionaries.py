@@ -49,6 +49,13 @@ gain_dictionary = dict([
                     ('dipole_half',[]),
                     ])
 
+gain_dbi_dictionary = dict([
+                    ('dipole_pure',[]),
+                    ('dipole_hertz',[]),
+                    ('dipole_short',[]),
+                    ('dipole_half',[]),
+                    ])
+
 dipole_expression_dictionary = dict([
                     ('dipole_pure',[]),
                     ('dipole_hertz',[]),
