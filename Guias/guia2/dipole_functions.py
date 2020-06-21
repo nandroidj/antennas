@@ -129,7 +129,7 @@ def dipole_gain_inTimes(l):
 
 #    return directivity_value * efficiency_value;
 
-    return dipole_max_directivity_inTimes(l) * dipole_efficiency(l)
+    return float(dipole_max_directivity_inTimes(l) * dipole_efficiency(l))
 
 def dipole_gain_indBi(l):
     
@@ -218,7 +218,7 @@ def evaluate_parameters():
         for v in value:
             r_radiation_dictionary[key].append(dipole_radiation_resistance_equation(v))
             loss_resistance_dictionary[key].append(dipole_loss_resistance(v))
-            efficiency_dictionary[key].append(dipole_loss_resistance(v))
+            efficiency_dictionary[key].append(dipole_efficiency(v))
             directivity_dictionary[key].append(dipole_max_directivity_inTimes(v))
             directivity_dbi_dictionary[key].append(dipole_directivity_indBi(v))
             gain_dictionary[key].append(dipole_gain_inTimes(v))
@@ -230,7 +230,7 @@ def plot_dipole_parameters(wd):
 
     save_dir = wd/"dipole/"
     if not save_dir.is_dir():
-        print(f"dipole: Directory not found! Creating one")
+        print(f"{save_dir}: Directory not found! Creating one")
         Path.mkdir(save_dir)
 
 
@@ -333,12 +333,12 @@ def plot_dipole_parameters(wd):
 
         for key_gain in gain_dictionary.keys():
 
-            if key_dipole == key_directivity:       
+            if key_dipole == key_gain:       
                 plt.figure()
                 plt.ion()
                 plt.xlabel('L/lambda')
                 plt.ylabel('Ganancia' + ' ' + '[veces]')
-                plt.plot(dipole_dictionary[key_dipole], gain_dictionary[key_directivity], color='g')
+                plt.plot(dipole_dictionary[key_dipole], gain_dictionary[key_gain], color='g')
                 plt.grid()
                 plt.ioff()
                 plt.savefig(save_dir_gain_times/f"{key_dipole}_gain_dipole.png", bbox_inches='tight', dpi=150)
@@ -351,12 +351,12 @@ def plot_dipole_parameters(wd):
 
         for key_gain_dbi in gain_dbi_dictionary.keys():
 
-            if key_dipole == key_directivity_dbi:       
+            if key_dipole == key_gain_dbi:       
                 plt.figure()
                 plt.ion()
                 plt.xlabel('L/lambda')
                 plt.ylabel('Directividad' + ' ' + '[dBi]')
-                plt.plot(dipole_dictionary[key_dipole], gain_dbi_dictionary[key_directivity_dbi], color='g')
+                plt.plot(dipole_dictionary[key_dipole], gain_dbi_dictionary[key_gain_dbi], color='g')
                 plt.grid()
                 plt.ioff()
                 plt.savefig(save_dir_gain_dbi/f"{key_dipole}_gain_dbi_dipole.png", bbox_inches='tight', dpi=150)
@@ -374,7 +374,7 @@ def plot_monopole_parameters(wd):
 
     save_dir= wd/"monopole/"
     if not save_dir.is_dir():
-        print(f"monopole folder: Directory not found! Creating one")
+        print(f"{save_dir}: Directory not found! Creating one")
         Path.mkdir(save_dir)
     
     plt.savefig(save_dir/f"monopole_r_radiation.png", bbox_inches='tight', dpi=150)
@@ -450,11 +450,11 @@ def plot_current_distribution(l, wd):
             linewidth=2, color='g', label=fr'L/\lambda = {l}')
     
     plt.legend(loc='upper right')
-    plt.grid('minor')
+    plt.grid()
 
-    save_dir = wd/"Dipolo"
+    save_dir = wd/"dipole/current_distribution/"
     if not save_dir.is_dir():
-        print(wd/current_distribution/f"{save_dir}: Directory not found! Creating one")
+        print(save_dir/f"{save_dir}: Directory not found! Creating one")
         Path.mkdir(save_dir)
 
     fig.savefig(save_dir/f"currentDist_{l}.png", bbox_inches='tight', dpi=150)
@@ -469,7 +469,6 @@ def main():
     plot_dipole_parameters(IMG_DIR)
     plot_monopole_parameters(IMG_DIR)
 
-'''
     lengths_c = [
             0.01,
             0.1,
@@ -479,7 +478,7 @@ def main():
 
     for l in lengths_c:
         plot_current_distribution(l,IMG_DIR)    
-'''
+
     
 if __name__ == '__main__':
     main()    
