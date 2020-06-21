@@ -187,7 +187,8 @@ def plot_current_distribution(l, wd):
     if not save_dir.is_dir():
         print(f"{save_dir}: Directory not found! Creating one")
         Path.mkdir(save_dir)
-
+    plt.xlabel(r"$z\:[m]$")
+    plt.ylabel(r"$I/:[A]$")
     fig.savefig(save_dir/f"currentDist_{l}.png", bbox_inches='tight', dpi=150)
     
 
@@ -272,8 +273,9 @@ def plot_parameter(param, dictionary, wd):
                             for l in dl]
             if(key == 'Monopolo'):
                parameter = np.divide(parameter, 2)
-
+            
             min_max_val(parameter, param, key)
+            _ylabel = r"$R_{RAD} [\Omega]$"
 
         elif param == 'Loss Resistance': 
             parameter = [dipole_loss_resistance(l) 
@@ -283,12 +285,14 @@ def plot_parameter(param, dictionary, wd):
                 parameter = np.divide(parameter, 2)
 
             min_max_val(parameter, param, key)
+            _ylabel = r"$R_{Loss} [\Omega]$"
 
         elif param == 'Efficiency':
             parameter = [dipole_efficiency(dipole_radiation_resistance_equation(l),
                                  dipole_loss_resistance(l)) for l in dl]
             min_max_val(parameter, param, key)
 
+            _ylabel = r"$\eta $"
         elif param == 'Directivity':
             parameter = [dipole_max_directivity_inTimes(l) 
                        for l in dl]
@@ -297,6 +301,7 @@ def plot_parameter(param, dictionary, wd):
                 parameter = np.multiply(parameter, 2)
 
             min_max_val(parameter, param, key)
+            _ylabel = r"D"
 
         elif param == 'Gain':
             
@@ -312,6 +317,7 @@ def plot_parameter(param, dictionary, wd):
             parameter = np.multiply(directivity, eff)
 
             min_max_val(parameter, param, key)
+            _ylabel = r"Ganancia"
 
         else:
             print(f"Error {param} param not found!")
@@ -333,6 +339,8 @@ def plot_parameter(param, dictionary, wd):
                 print(f"{save_dir}: Directory not found! Creating one")
                 Path.mkdir(save_dir)
 
+            plt.xlabel(r"$\frac{L}{\lambda}\:[Hz/m]$")
+            plt.ylabel(fr"{_ylabel}")
             fig.savefig(save_dir/f"{param}.png", bbox_inches='tight', dpi=150)
             ## dB Plot
             if param == 'Gain': 
@@ -346,6 +354,8 @@ def plot_parameter(param, dictionary, wd):
                     label=fr'{param}')
                 plt.legend(loc='upper left')
                 plt.grid('minor')
+                plt.xlabel(r"$\frac{L}{\lambda}\:[Hz/m]$")
+                plt.ylabel("Ganancia [dB]")
                 fig.savefig(save_dir/f"{param}db.png", bbox_inches='tight', dpi=150)
 
 
