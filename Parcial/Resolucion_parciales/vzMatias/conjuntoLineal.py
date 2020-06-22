@@ -1,4 +1,4 @@
-from numpy import cos, sin, pi, linspace, amax, gradient
+from numpy import cos, sin, pi, linspace, amax, log10
 from matplotlib import pyplot as plt
 import random
 
@@ -11,8 +11,7 @@ def main():
     d = 1/2
     N = 4
     beta = 2*pi
-    alfa = pi/2
-
+    
     if alfa == 0:
         print("Broad side")
         ## El máximo esta en phi = 90Grados
@@ -27,8 +26,8 @@ def main():
     psi = beta*d* cos(phi) + alfa 
 
     ######## Array factor del conjunto ###########
-    fun = lambda x: 1/N * sin(N*x/2) / sin(x/2)
-    array_factor = [abs(fun(x)) if x != 0 else 1 for x in psi]
+    factor = lambda x: 1/N * sin(N*x/2) / sin(x/2)
+    array_factor = [abs(factor(x)) if x != 0 else 1 for x in psi]
     ## Esta es una función simétrica periódica 
 
     ## Ancho lóbulo principal = 4*pi / N
@@ -36,9 +35,9 @@ def main():
 
     ####### SLL Side Lobe Level ##################
     ## SLL = maxLobulo secundario / maxLobuloPrincipal
-    
-    #TODO: buscar el máximo principal y moverse 3pi/N 
-    # Luego hacer 20*log10(SLL)
+    ## El máximo siempre está en psi = 0 -> El segundo máximo esta en psi = 3pi/N 
+    SSL_veces = abs(factor(3*pi/N))
+    print('SSL= ', round(20*log10(SSL_veces), 2), 'dB')
 
     ####### Calcular defasaje #################
     # En el máximo psi = 0
@@ -61,7 +60,8 @@ def main():
     fig = plt.figure()
     plt.plot(psi/pi, array_factor, linewidth=2,
             color=random.choice(COLORS), label=fr'$\alpha=${alfa/pi}$\pi$')
-    plt.xlabel(r'[x$\pi$]')
+    plt.xlabel(r'$\frac{\psi}{\pi}$')
+    plt.ylabel(f'$AF(\psi)$')
     plt.grid('minor')
     plt.legend()
     ###### SHOW PLOTS ###### 
