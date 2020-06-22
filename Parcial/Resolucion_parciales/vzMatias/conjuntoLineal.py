@@ -48,13 +48,12 @@ def main():
     
     #### Campo lejano ##########################
     # D -> Dimensión de la antena
-    # Para un dipolo corto -> L < lambda  / 10 
+    # Un dipolo es corto cuanado -> L < lambda  / 10 
     # D \approx lambda/2
     # R \approx (2D^{2}/\label)
     
     ###### Potencia recibida Wr mediante ecuación de friss
     
-
     ################ POLARES ################################ 
     fig = plt.figure()
     plt.polar(phi, array_factor)
