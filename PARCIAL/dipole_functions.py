@@ -232,6 +232,18 @@ def polar_plot_dB(l, mindB, wd, key):
 
     multiplicacionDeDiagramas = [x*y for x, y in zip(F, array_factor)] 
 
+    #### Calculo de la directividadddd de un conjunto de focos isotropicos
+    
+    f_sum = lambda m: ((N - m)/(m*beta*d)) * np.cos(m*alfa)*np.sin(m*beta*d)
+    toria = [f_sum(m) for m in range(1, N)]
+    sumatoria = sum(toria)
+
+    den = 1/N + (2/N**2 * sumatoria)
+    
+    DirectivityyIsotropico = [x/den for x in array_factor]
+    DirectivityyIsotropico = max(DirectivityyIsotropico)
+    print(DirectivityyIsotropico)
+
     ##### Plot
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='polar')
