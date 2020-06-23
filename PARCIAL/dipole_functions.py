@@ -244,12 +244,12 @@ def polar_plot_dB(l, mindB, wd, key):
             color='m', linewidth=2)
     ax.legend(loc='upper right')
     
-    save_dir = wd/f"{key}"
-    if not save_dir.is_dir():
-        print(f"{save_dir}: Directory not found! Creating one")
-        Path.mkdir(save_dir)
-
-    fig.savefig(save_dir/f"polarplotL_{l}.png", bbox_inches='tight', dpi=150)
+   # save_dir = wd/f"{key}"
+   # if not save_dir.is_dir():
+   #     print(f"{save_dir}: Directory not found! Creating one")
+   #     Path.mkdir(save_dir)
+    plt.show()
+    #fig.savefig(save_dir/f"polarplotL_{l}.png", bbox_inches='tight', dpi=150)
     
 
 
@@ -361,74 +361,9 @@ def plot_parameter(param, dictionary, wd):
 
 def main():
     
-    ################################# Manage paths #############################
-    WORKING_DIR = Path.cwd()
-    IMG_DIR = WORKING_DIR/"Img"
-    ### Check if Img dir exist
-    if not IMG_DIR.is_dir():
-        ### if not exist then create the dir
-        print(IMG_DIR, ": Directory not found. Making it for you")
-        Path.mkdir(IMG_DIR)
-    #############################PARAMETERS#####################################
-    
-    antennas_t = {
-            "Dipolo": np.arange(0.01,1,0.01), 
-            "Monopolo": np.arange(0.01,1,0.01), 
-            "Dipolo hertz": np.linspace(0.00001, 0.001, 1000),
-            "Dipolo corto": np.linspace(0.01, 0.1, 1000),
-            "Dipolo media": np.linspace(0.001, 0.5, 1000)
-            }
+    polar_plot_dB(0.5 ,-30, "nop", "Dipolo")
+                
 
-    plotParameters = [
-        'Radiation Resistance', 
-        'Loss Resistance',
-        'Efficiency',
-        'Directivity',
-        'Gain'
-    ]
-   
-    ## Create table markdown file to generate a table wth the values
-
-    print("## Archivo creado por dipole_functions.py ", file=open("README.md","a"))
-
-    print("| Dato | Valor |", file=open("README.md","a"))
-    print("| ---- | ----- |", file=open("README.md","a"))
-
-    ### Plot
-    for param in plotParameters:
-        print(f"Ploting {param}....")
-        plot_parameter(param, antennas_t, IMG_DIR)
-
-    #################################POLAR PLOT##################################       
-    lengths = [
-        0.1,
-        0.5,
-        1,
-        1.25,
-        1.5
-    ]
-    
-    ### Min dB ploted
-    mindB = -30
-    ### Plot
-
-    for key, vals in antennas_t.items():
-        if key == "Dipolo" or key == "Monopolo":
-            for l in lengths:
-                print(f"{key}: Ploting polar plor for L/lam = {l}")
-                polar_plot_dB(l ,mindB, IMG_DIR, key)
-
-    #################################CUrrent Distribution#########################
-    lengths_c = [
-            0.01,
-            0.1,
-            0.5,
-            1
-    ]
-
-    for l in lengths_c:
-        print(f"Ploting current distribution for L/lam = {l}")
-        plot_current_distribution(l,IMG_DIR)
 
 if __name__ == '__main__':
    main()
