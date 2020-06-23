@@ -238,11 +238,12 @@ def polar_plot_dB(l, mindB, wd, key):
     toria = [f_sum(m) for m in range(1, N)]
     sumatoria = sum(toria)
 
-    den = 1/N + (2/N**2 * sumatoria)
+    den = 1/N + ((2/(N)**2) * sumatoria)
     
-    DirectivityyIsotropico = [x/den for x in array_factor]
+    DirectivityyIsotropico = [abs(x)/den for x in array_factor]
     DirectivityyIsotropico = max(DirectivityyIsotropico)
     print(DirectivityyIsotropico)
+    print('Conunto de dipolos:',DirectivityyIsotropico * 1.643)
 
     ##### Plot
     fig = plt.figure()
