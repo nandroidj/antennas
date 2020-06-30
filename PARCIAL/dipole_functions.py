@@ -222,7 +222,7 @@ def polar_plot_dB(l, mindB, wd, key):
     d = 1/2
     beta = 2*np.pi
     N = 8
-    alfa = -1*beta*d*np.cos(np.deg2rad(95))
+    alfa = beta*d*np.cos(np.deg2rad(95))
 
     phi = np.linspace(avoid0, 2*pi, 1000);
     psi = beta*d* np.cos(phi) + alfa 
@@ -239,11 +239,14 @@ def polar_plot_dB(l, mindB, wd, key):
     sumatoria = sum(toria)
 
     den = 1/N + ((2/(N)**2) * sumatoria)
-    
+
+    den = 1/N
     DirectivityyIsotropico = [abs(x)/den for x in array_factor]
     DirectivityyIsotropico = max(DirectivityyIsotropico)
+
     print(DirectivityyIsotropico)
-    print('Conunto de dipolos:',DirectivityyIsotropico * 1.643)
+    r = 2e3
+    print(np.sqrt((100e3 * DirectivityyIsotropico*1.643 * 377) / (4*np.pi*(r)**2)) * 2 * np.sin(100*2*pi/(3*r)))
 
     ##### Plot
     fig = plt.figure()
@@ -260,7 +263,7 @@ def polar_plot_dB(l, mindB, wd, key):
    #     Path.mkdir(save_dir)
     plt.show()
     #fig.savefig(save_dir/f"polarplotL_{l}.png", bbox_inches='tight', dpi=150)
-    
+
 
 
 def min_max_val(parameter, param, key):
