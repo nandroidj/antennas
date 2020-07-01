@@ -10,20 +10,30 @@ IN   8 31  "pifa.cfm"
 ** End of geometry
 EG: 1 : 0 : 0 :  :  : 1e-06 : 1 : 1 :  : 0 : 0 : 0 : 1
 
+** Set medium properties, coatings and skin effects
+DI: FR4 :  :  :  :  : 2.2 : 1 :  : 0 : 0.04 : 0.002
+
 
 ** Set frequency
-FR:  :  :  :  :  : 0
+FR: 1000 : 1 :  :  :  : 2000000000 :  : 3000000000
 
 ** Sources
+
+AE: 0 : Antenna.Face71_1 : Antenna.Face71_2 : 0 : 1 : 1 : 0 ** VoltageSource1
 
 ** Total source power
 ** use defaults
 
 ** Requested output
 DA: : : : 0
-OS: 0 ** Currents1
+
+
+** Far fields: FarField1
+DA:  :  : 0 :  :  :  : 0
+OF: 1 : 0 :  :  :  : 0 : 0 : 0
+FF: 1 : 37 : 73 : 0 :  : 0 : 0 : 5 : 5 ** FarField1
 
 ** End of file
 EN
 
-** CADFEKO Checksum: 663525a1c4edf57603bb66b76312e8ff
+** CADFEKO Checksum: 88370c94c765a9462915b3bc06683ade
