@@ -342,6 +342,7 @@ def plot_parameter(param, dictionary, wd):
             plt.xlabel(r"$\frac{L}{\lambda}\:[Hz/m]$")
             plt.ylabel(fr"{_ylabel}")
             fig.savefig(save_dir/f"{param}.png", bbox_inches='tight', dpi=150)
+
             ## dB Plot
             if param == 'Gain': 
                 fig = plt.figure()
